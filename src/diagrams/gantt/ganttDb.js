@@ -1,4 +1,4 @@
-import moment from 'moment'
+import moment from 'moment-business-days'
 import { logger } from '../../logger'
 
 let dateFormat = ''
@@ -29,6 +29,26 @@ export const getAxisFormat = function () {
 
 export const setDateFormat = function (txt) {
   dateFormat = txt
+}
+
+export const setWorkingWeekdays = function (txt) {
+  const specifiers = txt.split(',')
+  let workingWeekdays = []
+  for (let specifier of specifiers) {
+    workingWeekdays.push(moment().isoWeekday(specifier.trim()))
+  }
+
+  moment.updateLocale(moment.locale(), {
+    workingWeekdays: workingWeekdays
+  })
+}
+
+export const setHolidays = function (txt) {
+  const specifiers = txt.split(',')
+  moment.updateLocale(moment.locale(), {
+    holidays: specifiers,
+    holidayFormat: dateFormat
+  })
 }
 
 export const setTitle = function (txt) {
@@ -96,7 +116,8 @@ const getEndDate = function (prevTime, dateFormat, str) {
     return moment(str, dateFormat.trim()).toDate()
   }
 
-  const d = moment(prevTime)
+  let d = moment(prevTime)
+
   // Check for length
   const re = /^([\d]+)([wdhms])/
   const durationStatement = re.exec(str.trim())
@@ -113,7 +134,7 @@ const getEndDate = function (prevTime, dateFormat, str) {
         d.add(durationStatement[1], 'hours')
         break
       case 'd':
-        d.add(durationStatement[1], 'days')
+        d = d.businessAdd(durationStatement[1])
         break
       case 'w':
         d.add(durationStatement[1], 'weeks')
@@ -121,6 +142,7 @@ const getEndDate = function (prevTime, dateFormat, str) {
     }
     return d.toDate()
   }
+
   // Default date - now
   return d.toDate()
 }

@@ -109,7 +109,7 @@ describe('when using the ganttDb', function () {
     ganttDb.addTask('test1', '2013-01-01,4d')
     const tasks = ganttDb.getTasks()
     expect(tasks[0].startTime).toEqual(moment('2013-01-01', 'YYYY-MM-DD').toDate())
-    expect(tasks[0].endTime).toEqual(moment('2013-01-05', 'YYYY-MM-DD').toDate())
+    expect(tasks[0].endTime).toEqual(moment('2013-01-07', 'YYYY-MM-DD').toDate())
     expect(tasks[0].id).toEqual('task1')
     expect(tasks[0].task).toEqual('test1')
   })

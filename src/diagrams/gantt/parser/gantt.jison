@@ -8,7 +8,7 @@
 %options case-insensitive
 
 %{
-	// Pre-lexer code can go here
+  // Pre-lexer code can go here
 %}
 
 %%
@@ -17,9 +17,11 @@
 \s+                     /* skip whitespace */
 \#[^\n]*                /* skip comments */
 \%%[^\n]*               /* skip comments */
-"gantt"     	        return 'gantt';
+"gantt"                 return 'gantt';
 "dateFormat"\s[^#\n;]+  return 'dateFormat';
 "axisFormat"\s[^#\n;]+  return 'axisFormat';
+"workingWeekdays"\s[^#\n;]+     return 'workingWeekdays';
+"holidays"\s[^#\n;]+     return 'holidays';
 \d\d\d\d"-"\d\d"-"\d\d  return 'date';
 "title"\s[^#\n;]+       return 'title';
 "section"\s[^#:\n;]+    return 'section';
@@ -55,7 +57,9 @@ line
 
 statement
 	: 'dateFormat' {yy.setDateFormat($1.substr(11));$$=$1.substr(11);}
-  | 'axisFormat' {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
+	| 'axisFormat' {yy.setAxisFormat($1.substr(11));$$=$1.substr(11);}
+	| 'workingWeekdays' {yy.setExclude($1.substr(16));$$=$1.substr(16);}
+	| 'holidays' {yy.setExclude($1.substr(9));$$=$1.substr(9);}
 	| title {yy.setTitle($1.substr(6));$$=$1.substr(6);}
 	| section {yy.addSection($1.substr(8));$$=$1.substr(8);}
 	| taskTxt taskData {yy.addTask($1,$2);$$='task';}
